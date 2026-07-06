@@ -1,8 +1,8 @@
 # Freelance-Marketplace
 
-A full-stack freelancer marketplace with milestone-based escrow payments, real-time chat, and dispute resolution.
+A full-stack freelance marketplace featuring milestone-based escrow payments, real-time chat, role-based authentication, and dispute resolution.
 
-**Live demo:** _Coming soon (deploy to Render + Vercel — see [Deployment](#deployment))_
+**Live Demo:** Deployment in progress.
 
 ---
 
@@ -187,7 +187,7 @@ const hash = await bcrypt.hash('yourpassword', 10);
 
 ### Backend → Render
 
-1. Create a new **Web Service** connected to `satyamsipah/FlexHire`.
+1. Create a new Web Service by connecting your GitHub repository.
 2. Root directory: `backend`
 3. Build command: `npm install`
 4. Start command: `node src/index.js`
@@ -216,7 +216,7 @@ const hash = await bcrypt.hash('yourpassword', 10);
 
 ### Frontend → Vercel
 
-1. Import `satyamsipah/FlexHire` in Vercel.
+1. Import your GitHub repository into Vercel.
 2. Root directory: `frontend`
 3. Framework preset: **Vite**
 4. Environment variables:
@@ -270,31 +270,26 @@ GET    /api/health                     → Render health check
 
 ## Project structure
 
-```
-FlexHire/
+```text
+Freelance-Marketplace/
 ├── README.md
-├── CLAUDE.md          ← AI assistant context + gotchas
 ├── backend/
 │   ├── .env.example
-│   ├── package.json   ("type":"module")
+│   ├── package.json
 │   └── src/
-│       ├── index.js   (Express + Socket.io, port 5001)
-│       ├── config/    db.js, redis.js
-│       ├── constants/ roles.js
-│       ├── middleware/ requireAuth.js, requireRole.js, socketAuth.js
-│       ├── models/    User, Project, Message, Dispute, AuditLog, Review
-│       ├── routes/    auth, projects, milestones, disputes, webhooks, uploads, reviews
-│       ├── services/  escrow/MilestoneStateMachine.js
-│       │              payments/razorpay.js
-│       │              notifications/email.js
-│       │              uploads/cloudinary.js
-│       └── sockets/   chatSocket.js
+│       ├── index.js
+│       ├── config/
+│       ├── constants/
+│       ├── middleware/
+│       ├── models/
+│       ├── routes/
+│       ├── services/
+│       └── sockets/
 └── frontend/
     └── src/
-        ├── lib/       api.js, format.js
-        ├── store/     authStore.js
-        ├── hooks/     useProjectSocket.js
-        ├── components/ ProtectedRoute, ErrorBoundary, ConfirmModal
-        └── pages/     Login, Signup, ClientDashboard, FreelancerDashboard,
-                       AdminDashboard, ProjectChat, NotFound
+        ├── lib/
+        ├── store/
+        ├── hooks/
+        ├── components/
+        └── pages/
 ```
