@@ -1,4 +1,4 @@
-# FlexHire
+# Freelance-Marketplace
 
 A full-stack freelancer marketplace with milestone-based escrow payments, real-time chat, and dispute resolution.
 
