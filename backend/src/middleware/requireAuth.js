@@ -1,20 +1,29 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
-// Reads the JWT from the httpOnly cookie 'token'.
-// Attaches req.userId and req.userRole for use by downstream route handlers.
-// Role comes from the token payload — no DB query on every request.
-// (The token is refreshed on every login/signup, so role is current as of last sign-in.)
 export function requireAuth(req, res, next) {
+  console.log("=== AUTH DEBUG ===");
+  console.log("Cookie header:", req.headers.cookie);
+  console.log("Parsed cookies:", req.cookies);
+
   const token = req.cookies?.token;
-  if (!token) return res.status(401).json({ error: 'Not authenticated' });
+
+  if (!token) {
+    console.log("❌ No token received");
+    return res.status(401).json({ error: "Not authenticated" });
+  }
 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId   = payload.userId;
+
+    req.userId = payload.userId;
     req.userRole = payload.role;
-    req.isGuest  = payload.isGuest === true; // demo accounts — see middleware/blockGuests.js
+    req.isGuest = payload.isGuest === true;
+
+    console.log("✅ Authenticated:", payload);
+
     next();
-  } catch {
-    res.status(401).json({ error: 'Invalid or expired token' });
+  } catch (err) {
+    console.log("❌ JWT verification failed:", err.message);
+    res.status(401).json({ error: "Invalid or expired token" });
   }
 }
