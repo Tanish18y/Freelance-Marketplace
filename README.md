@@ -59,17 +59,17 @@ Clients post projects with one or more milestones. Each milestone has a fixed pr
                     CANCELLED─┘ (from CREATED only)
 ```
 
-| # | Transition | From | To | Who |
-|---|-----------|------|----|-----|
-| 1 | fund | CREATED | FUNDED | Razorpay webhook |
-| 2 | start | FUNDED | IN_PROGRESS | Freelancer |
-| 3 | submit | IN_PROGRESS | SUBMITTED | Freelancer |
-| 4 | approve | SUBMITTED | APPROVED | Client |
-| 5 | dispute | SUBMITTED | DISPUTED | Client or Freelancer |
-| 6 | resolveDispute(approve) | DISPUTED | APPROVED | Admin |
-| 7 | resolveDispute(refund) | DISPUTED | REFUNDED | Admin |
-| 8 | cancel | CREATED | CANCELLED | Client |
-| 9 | autoRefund | FUNDED | REFUNDED | Admin |
+| #   | Transition              | From        | To          | Who                  |
+| --- | ----------------------- | ----------- | ----------- | -------------------- |
+| 1   | fund                    | CREATED     | FUNDED      | Razorpay webhook     |
+| 2   | start                   | FUNDED      | IN_PROGRESS | Freelancer           |
+| 3   | submit                  | IN_PROGRESS | SUBMITTED   | Freelancer           |
+| 4   | approve                 | SUBMITTED   | APPROVED    | Client               |
+| 5   | dispute                 | SUBMITTED   | DISPUTED    | Client or Freelancer |
+| 6   | resolveDispute(approve) | DISPUTED    | APPROVED    | Admin                |
+| 7   | resolveDispute(refund)  | DISPUTED    | REFUNDED    | Admin                |
+| 8   | cancel                  | CREATED     | CANCELLED   | Client               |
+| 9   | autoRefund              | FUNDED      | REFUNDED    | Admin                |
 
 When the last milestone reaches APPROVED, the Project atomically transitions to COMPLETED in the same MongoDB transaction.
 
@@ -77,17 +77,17 @@ When the last milestone reaches APPROVED, the Project atomically transitions to 
 
 ## Tech stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | Node.js 20 · Express · ESM modules |
-| Database | MongoDB Atlas · Mongoose 8 · multi-document transactions |
-| Auth | JWT in httpOnly cookies · bcrypt |
-| Payments | Razorpay Orders + HMAC webhook · mocked Payouts |
-| Real-time | Socket.io 4 · `/chat` namespace · Redis adapter (Upstash) |
-| File uploads | Cloudinary · multer-storage-cloudinary |
-| Email | Nodemailer · Gmail App Password |
-| Frontend | React 19 · Vite · Tailwind CSS v4 |
-| State | Zustand |
+| Layer        | Technology                                                |
+| ------------ | --------------------------------------------------------- |
+| Backend      | Node.js 20 · Express · ESM modules                        |
+| Database     | MongoDB Atlas · Mongoose 8 · multi-document transactions  |
+| Auth         | JWT in httpOnly cookies · bcrypt                          |
+| Payments     | Razorpay Orders + HMAC webhook · mocked Payouts           |
+| Real-time    | Socket.io 4 · `/chat` namespace · Redis adapter (Upstash) |
+| File uploads | Cloudinary · multer-storage-cloudinary                    |
+| Email        | Nodemailer · Gmail App Password                           |
+| Frontend     | React 19 · Vite · Tailwind CSS v4                         |
+| State        | Zustand                                                   |
 
 ---
 
@@ -95,7 +95,7 @@ When the last milestone reaches APPROVED, the Project atomically transitions to 
 
 - **Milestone state machine** — `MilestoneStateMachine.js` contains 9 static methods, each wrapped in a `mongoose.startSession()` + `withTransaction()`. Every transition saves an `AuditLog` document in the same transaction. An `InvalidTransitionError` (HTTP 409) is thrown on invalid source states.
 
-- **Webhook-first payment flow** — The `/api/webhooks/razorpay` route is registered *before* `express.json()` so the raw body buffer is intact for HMAC verification. Payment capture fires `MilestoneStateMachine.fund()`.
+- **Webhook-first payment flow** — The `/api/webhooks/razorpay` route is registered _before_ `express.json()` so the raw body buffer is intact for HMAC verification. Payment capture fires `MilestoneStateMachine.fund()`.
 
 - **Socket.io auth** — httpOnly cookies can't be read by `document.cookie`. The `socketAuth` middleware parses the raw `Cookie` header from `socket.handshake.headers.cookie` using the `cookie` package, verifies the JWT, and attaches `userId`, `userRole`, and `userName` to the socket.
 
@@ -129,7 +129,7 @@ npm run dev        # port 5001
 
 ### Seed the guest demo accounts
 
-Creates the two demo users (`demo-client@flexhire.demo`, `demo-freelancer@flexhire.demo`)
+Creates the two demo users (`demo-client@WorkNest.demo`, `demo-freelancer@WorkNest.demo`)
 plus realistic demo data that powers the **Explore as Guest** button. Idempotent — safe
 to re-run any time to reset the demo to a clean state:
 
@@ -168,7 +168,7 @@ Admin accounts cannot be created via the signup API (by design). Seed one direct
 // Paste in Atlas Data Explorer → Insert Document in the users collection
 {
   "name": "Admin",
-  "email": "admin@flexhire.dev",
+  "email": "admin@WorkNest.dev",
   "password": "<bcrypt hash of your password>",
   "role": "admin",
   "walletBalance": 0
@@ -176,9 +176,10 @@ Admin accounts cannot be created via the signup API (by design). Seed one direct
 ```
 
 Or run in the Node REPL:
+
 ```js
-import bcrypt from 'bcrypt';
-const hash = await bcrypt.hash('yourpassword', 10);
+import bcrypt from "bcrypt";
+const hash = await bcrypt.hash("yourpassword", 10);
 ```
 
 ---
@@ -193,21 +194,21 @@ const hash = await bcrypt.hash('yourpassword', 10);
 4. Start command: `node src/index.js`
 5. Environment variables:
 
-| Key | Value |
-|-----|-------|
-| `NODE_ENV` | `production` |
-| `MONGODB_URI` | Atlas connection string |
-| `JWT_SECRET` | Long random string |
-| `RAZORPAY_KEY_ID` | From Razorpay dashboard |
-| `RAZORPAY_KEY_SECRET` | From Razorpay dashboard |
-| `RAZORPAY_WEBHOOK_SECRET` | From Razorpay webhook settings |
-| `CLOUDINARY_CLOUD_NAME` | From Cloudinary dashboard |
-| `CLOUDINARY_API_KEY` | From Cloudinary dashboard |
-| `CLOUDINARY_API_SECRET` | From Cloudinary dashboard |
-| `GMAIL_USER` | Gmail address |
-| `GMAIL_APP_PASSWORD` | 16-char app password |
-| `REDIS_URL` | Upstash TLS URL (`rediss://...`) |
-| `FRONTEND_URL` | Your Vercel deployment URL |
+| Key                       | Value                            |
+| ------------------------- | -------------------------------- |
+| `NODE_ENV`                | `production`                     |
+| `MONGODB_URI`             | Atlas connection string          |
+| `JWT_SECRET`              | Long random string               |
+| `RAZORPAY_KEY_ID`         | From Razorpay dashboard          |
+| `RAZORPAY_KEY_SECRET`     | From Razorpay dashboard          |
+| `RAZORPAY_WEBHOOK_SECRET` | From Razorpay webhook settings   |
+| `CLOUDINARY_CLOUD_NAME`   | From Cloudinary dashboard        |
+| `CLOUDINARY_API_KEY`      | From Cloudinary dashboard        |
+| `CLOUDINARY_API_SECRET`   | From Cloudinary dashboard        |
+| `GMAIL_USER`              | Gmail address                    |
+| `GMAIL_APP_PASSWORD`      | 16-char app password             |
+| `REDIS_URL`               | Upstash TLS URL (`rediss://...`) |
+| `FRONTEND_URL`            | Your Vercel deployment URL       |
 
 6. After deploy: update Razorpay webhook URL to `https://<render-url>/api/webhooks/razorpay`.
 7. In MongoDB Atlas → Network Access → Add `0.0.0.0/0` (Render uses dynamic IPs).
@@ -221,10 +222,10 @@ const hash = await bcrypt.hash('yourpassword', 10);
 3. Framework preset: **Vite**
 4. Environment variables:
 
-| Key | Value |
-|-----|-------|
-| `VITE_API_URL` | `https://<your-render-service>.onrender.com` |
-| `VITE_RAZORPAY_KEY_ID` | Same as backend `RAZORPAY_KEY_ID` |
+| Key                    | Value                                        |
+| ---------------------- | -------------------------------------------- |
+| `VITE_API_URL`         | `https://<your-render-service>.onrender.com` |
+| `VITE_RAZORPAY_KEY_ID` | Same as backend `RAZORPAY_KEY_ID`            |
 
 5. After Vercel deploy: copy the `*.vercel.app` URL → Render env → `FRONTEND_URL` → redeploy backend.
 
